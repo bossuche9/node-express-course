@@ -20,6 +20,7 @@ const getBody = (req, callback) => {
   });
 };
 
+// comment to test nodemon live hot changes
 // here, you could declare one or more variables to store what comes back from the form.
 
 let color = "white";
@@ -58,7 +59,6 @@ const server = http.createServer((req, res) => {
         color = body["color"];
         message = `You selected ${color}!`;
       }
-
       // Your code changes would end here
       res.writeHead(303, {
         Location: "/",
@@ -68,6 +68,10 @@ const server = http.createServer((req, res) => {
   } else {
     res.end(form());
   }
+});
+
+server.on("request", (req) => {
+  console.log("event received: ", req.method, req.url);
 });
 
 server.listen(3000);
