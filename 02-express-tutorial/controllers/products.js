@@ -8,7 +8,7 @@ const findProducts = (req, res) => {
   const idToFind = parseInt(req.params.productID);
   const product = products.find((p) => p.id === idToFind);
 
-  if (isNaN(idToFind)) {
+  if (isNaN(Number(idToFind))) {
     return res.status(400).json({ success: false, message: "invalid ID" });
   }
 
