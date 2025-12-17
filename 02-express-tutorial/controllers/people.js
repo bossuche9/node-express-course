@@ -2,7 +2,6 @@ const { people } = require("../data.js");
 
 const getPeople = (req, res) => {
   res.status(200).json({ success: true, data: people });
-  console.log(people);
 };
 
 const addPerson = (req, res) => {
@@ -18,6 +17,10 @@ const findPeople = (req, res) => {
   const idToFind = parseInt(req.params.id);
   const person = people.find((p) => p.id === idToFind);
 
+  if (isNaN(idToFind)) {
+    return res.status(400).json({ success: false, message: "invalid ID" });
+  }
+
   if (!person) {
     return res.status(404).json({ message: "That person was not found" });
   }
@@ -25,40 +28,53 @@ const findPeople = (req, res) => {
 };
 
 const updatePerson = (req, res) => {
-  const { id } = req.params;
+  const id = Number(req.params.id);
   const { name } = req.body;
 
-  const person = people.find((person) => person.id === Number(id));
-
-  if (!person) {
-    return res
-      .status(404)
-      .json({ success: false, message: `No person with id ${id} was found` });
-  }
-
-  const newPeople = people.map((person) => {
-    if (person.id === Number(id)) {
-      person.name = name;
-    }
-    return person;
-  });
-  res.status(200).json({ success: true, data: newPeople });
-};
-
-const deletePerson = (req, res) => {
-  const person = people.find((person) => person.id === Number(req.params.id));
-
-  if (!person) {
-    return res.status(404).json({
+  if (isNaN(id)) {
+    return res.status(400).json({
       success: false,
-      message: `No person with id ${req.params.id} was found`,
+      message: "invalid ID, entere a number between 1 to 5",
     });
   }
 
-  const newPeople = people.filter(
-    (person) => person.id !== Number(req.params.id)
-  );
-  return res.status(200).json({ success: true, data: newPeople });
+  const person = people.find((p) => p.id === id);
+
+  if (!name) {
+    return res.status(404).json({
+      success: false,
+      message: `No name was entered for person with id ${id} `,
+    });
+  }
+
+  person.name = name;
+
+  res.status(200).json({ success: true, data: people });
+};
+
+const deletePerson = (req, res) => {
+  const id = Number(req.params.id);
+
+  if (isNaN(id)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid ID, entere a number between 1 to 5",
+    });
+  }
+
+  const personExists = people.find((p) => p.id === id);
+
+  if (!personExists) {
+    return res.status(404).json({
+      success: false,
+      message: `No person with id ${id} was found`,
+    });
+  }
+
+  const updatedPeople = people.filter((p) => p.id !== id);
+  people.length = 0;
+  people.push(...updatedPeople);
+  return res.status(200).json({ success: true, data: updatedPeople });
 };
 
 module.exports = {

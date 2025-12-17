@@ -5,10 +5,12 @@ const getProducts = (req, res) => {
 };
 
 const findProducts = (req, res) => {
-  //console.log(req);
-  // console.log(req.params);
   const idToFind = parseInt(req.params.productID);
   const product = products.find((p) => p.id === idToFind);
+
+  if (isNaN(idToFind)) {
+    return res.status(400).json({ success: false, message: "invalid ID" });
+  }
 
   if (!product) {
     return res.status(404).json({ message: "That product was not found" });
