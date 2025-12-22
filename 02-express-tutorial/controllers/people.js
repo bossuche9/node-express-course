@@ -9,7 +9,7 @@ const addPerson = (req, res) => {
     people.push({ id: people.length + 1, name: req.body.name });
     res.status(201).json({ success: true, name: req.body.name });
   } else {
-    res.status(400).json({ sucesss: false, message: "Please Provdie a name" });
+    res.status(400).json({ success: false, message: "Please Provdie a name" });
   }
 };
 
@@ -40,10 +40,16 @@ const updatePerson = (req, res) => {
 
   const person = people.find((p) => p.id === id);
 
+  if (!person) {
+    return res
+      .status(404)
+      .json({ success: false, message: `Mo person found with id ${id}` });
+  }
+
   if (!name) {
-    return res.status(404).json({
+    return res.status(400).json({
       success: false,
-      message: `No name was entered for person with id ${id} `,
+      message: `Please provide a name`,
     });
   }
 
