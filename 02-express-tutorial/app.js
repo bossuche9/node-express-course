@@ -1,10 +1,30 @@
 const express = require("express");
 const { products } = require("./data");
 
+const peopleRouter = require("./routes/people.js");
+const productRouter = require("./routes/products.js");
+
 const app = express();
 
 //setup static and middleware
-app.use(express.static("./public"));
+
+const logger = (req, res, next) => {
+  const method = req.method;
+  const url = req.url;
+  console.log(method, url);
+  next();
+};
+
+app.use(logger);
+
+app.use(express.urlencoded({ extended: false }));
+
+app.use(express.static("./methods-public"));
+
+app.use(express.json());
+
+app.use("/api/v1/people", peopleRouter);
+app.use("/api/v1/products", productRouter);
 
 app.get("/api/v1/test", (req, res) => {
   res.json({ message: "it worked!" });
@@ -15,8 +35,6 @@ app.get("/api/v1/products", (req, res) => {
 });
 
 app.get("/api/v1/products/:productID", (req, res) => {
-  //console.log(req);
-  // console.log(req.params);
   const idToFind = parseInt(req.params.productID);
   const product = products.find((p) => p.id === idToFind);
 
@@ -27,7 +45,6 @@ app.get("/api/v1/products/:productID", (req, res) => {
 });
 
 app.get("/api/v1/query", (req, res) => {
-  //console.log(req.query);
   const { search, limit, maxPrice } = req.query;
   let sortedProducts = [...products];
 
