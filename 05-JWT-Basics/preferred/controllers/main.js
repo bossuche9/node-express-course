@@ -13,7 +13,7 @@ const logon = async (req, res) => {
     expiresIn: process.env.JWT_LIFETIME,
   });
 
-  res.status(200).json({ msg: "user created", token });
+  res.status(200).json({ token });
 };
 
 const hello = async (req, res) => {
