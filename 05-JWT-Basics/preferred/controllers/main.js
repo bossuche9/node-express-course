@@ -10,7 +10,7 @@ const logon = async (req, res) => {
 
   // try to keep payload small, better experience for user
   const token = jwt.sign({ name }, process.env.JWT_SECRET, {
-    expiresIn: "24h",
+    expiresIn: process.env.JWT_LIFETIME,
   });
 
   res.status(200).json({ msg: "user created", token });
